@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{5C1F89E8-475D-451B-A1F0-6FE0E78123FE}</ProjectGuid>
+    <ProjectGuid>{00F72509-D7AE-4E54-8A0E-487751A2272B}</ProjectGuid>
     <Keyword>QtVS_v302</Keyword>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
     <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
@@ -43,11 +43,11 @@
   </ImportGroup>
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <QtInstall>msvc2017</QtInstall>
-    <QtModules>axcontainer;axserver;charts;core;datavisualization;gui;help;location;quick;quickwidgets;uitools;widgets</QtModules>
+    <QtModules>axcontainer;axserver;charts;core;datavisualization;gui;location;positioning;printsupport;quickwidgets;sql;testlib;uitools;widgets</QtModules>
   </PropertyGroup>
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <QtInstall>msvc2017</QtInstall>
-    <QtModules>axcontainer;axserver;charts;core;datavisualization;gui;help;location;quick;quickwidgets;uitools;widgets</QtModules>
+    <QtModules>axcontainer;axserver;charts;core;gui;location;positioning;printsupport;quickwidgets;testlib;uitools;widgets</QtModules>
   </PropertyGroup>
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.props')">
     <Import Project="$(QtMsBuild)\qt.props" />
@@ -80,11 +80,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BarChart.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="review.cpp" />
+    <ClCompile Include="mainwindow.cpp" />
+    <ClCompile Include="MultisimCinnectivityClass.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="review.h" />
+    <QtMoc Include="mainwindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BarChart.h" />
+    <ClInclude Include="MultisimConnectivityClass.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
