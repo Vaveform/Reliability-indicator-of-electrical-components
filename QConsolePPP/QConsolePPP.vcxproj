@@ -64,6 +64,8 @@
       <SubSystem>Console</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>E:\Zaebalo\SQLiteLiib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sqlite3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -81,6 +83,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BarChart.cpp" />
+    <ClCompile Include="ComponentList.cpp" />
+    <ClCompile Include="DialogOptions.cpp" />
+    <ClCompile Include="DisplayOfModels.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainwindow.cpp" />
     <ClCompile Include="MultisimCinnectivityClass.cpp" />
@@ -90,6 +95,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BarChart.h" />
+    <QtMoc Include="DialogOptions.h" />
+    <QtMoc Include="DisplayOfModels.h" />
+    <ClInclude Include="ComponentList.h" />
     <ClInclude Include="MultisimConnectivityClass.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

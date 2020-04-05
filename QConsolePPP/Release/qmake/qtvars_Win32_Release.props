@@ -5,7 +5,7 @@
 <Qt_LIBS_>C:\Qt\Qt5.14.1\5.14.1\msvc2017\lib\Qt5AxContainer.lib;C:\Qt\Qt5.14.1\5.14.1\msvc2017\lib\Qt5AxServer.lib;shell32.lib;C:\Qt\Qt5.14.1\5.14.1\msvc2017\lib\Qt5AxBase.lib;ole32.lib;oleaut32.lib;user32.lib;gdi32.lib;advapi32.lib;C:\Qt\Qt5.14.1\5.14.1\msvc2017\lib\Qt5Charts.lib;C:\Qt\Qt5.14.1\5.14.1\msvc2017\lib\Qt5PrintSupport.lib;C:\Qt\Qt5.14.1\5.14.1\msvc2017\lib\Qt5QuickWidgets.lib;C:\Qt\Qt5.14.1\5.14.1\msvc2017\lib\Qt5UiTools.lib;C:\Qt\Qt5.14.1\5.14.1\msvc2017\lib\Qt5Widgets.lib;C:\Qt\Qt5.14.1\5.14.1\msvc2017\lib\Qt5Location.lib;C:\Qt\Qt5.14.1\5.14.1\msvc2017\lib\Qt5PositioningQuick.lib;C:\Qt\Qt5.14.1\5.14.1\msvc2017\lib\Qt5Quick.lib;C:\Qt\Qt5.14.1\5.14.1\msvc2017\lib\Qt5Gui.lib;C:\Qt\Qt5.14.1\5.14.1\msvc2017\lib\Qt5Positioning.lib;C:\Qt\Qt5.14.1\5.14.1\msvc2017\lib\Qt5QmlModels.lib;C:\Qt\Qt5.14.1\5.14.1\msvc2017\lib\Qt5Qml.lib;C:\Qt\Qt5.14.1\5.14.1\msvc2017\lib\Qt5Network.lib;C:\Qt\Qt5.14.1\5.14.1\msvc2017\lib\Qt5Test.lib;C:\Qt\Qt5.14.1\5.14.1\msvc2017\lib\Qt5Core.lib</Qt_LIBS_>
 <Qt_LIBPATH_>C:\opensslx86\lib;C:\Utils\my_sql\mysql-5.7.25-win32\lib;C:\Utils\postgresqlx86\pgsql\lib</Qt_LIBPATH_>
 <Qt_INCLUDEPATH_
-      >$(Qt_INCLUDEPATH_);</Qt_INCLUDEPATH_>
+      >$(Qt_INCLUDEPATH_);Release\moc</Qt_INCLUDEPATH_>
     <QtBkup_QtInstall
       >msvc2017</QtBkup_QtInstall>
     <QtBkup_QtModules

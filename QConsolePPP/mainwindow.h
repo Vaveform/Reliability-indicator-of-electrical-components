@@ -15,8 +15,14 @@
 #include <QTableView>
 #include <QtCharts>
 #include <QtSql\QSqlTableModel>
+#include <QMenuBar>
+#include <QMenu>
+#include <QDir>
+#include <QStringLiteral>
 #include "BarChart.h"
 #include "MultisimConnectivityClass.h"
+#include "DialogOptions.h"
+#include "DisplayOfModels.h"
 
 namespace Ui {
 	class MainWindow;
@@ -46,10 +52,23 @@ private:
 	QTableView *tableView;
 	QChartView *chartView;
 	MyChart *chart;
-	QTableWidgetItem* first;
-	QTableWidgetItem* second;
-	QTableWidgetItem* third;
 	QTableWidget* table;
+	DialogOptions* dialogOptions;
+	QAction* action_1;
+	QMenu* menu;
+	QMenu* menu_1;
+	QMenu* menu_2;
+	DisplayOfModels* models;
+	QWidget* tab_3;
+	QVBoxLayout* verticalLayout_5;
+	QSplitter* splitter;
+	QTableWidget* table2;
+	QGraphicsView* graphics_View;
+	QGraphicsScene* scene;
+	QImage* image_object;
+	QLabel* image_label;
+	Component_List components;
+	QTableWidgetItem* Row_of_models;
 public:
 	explicit MainWindow();
 	virtual ~MainWindow();
@@ -57,4 +76,6 @@ private slots:
 	void OpenFile();
 	void CompleteWork();
 	void Calculate();
+	void OpenOptions();
+	void ModelSelection();
 };

@@ -33,11 +33,15 @@
     <ClCompile Include="MultisimCinnectivityClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <QtMoc Include="mainwindow.h">
+    <ClCompile Include="DialogOptions.cpp">
       <Filter>Source Files</Filter>
-    </QtMoc>
+    </ClCompile>
+    <ClCompile Include="DisplayOfModels.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BarChart.h">
@@ -46,5 +50,19 @@
     <ClInclude Include="MultisimConnectivityClass.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentList.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="mainwindow.h">
+      <Filter>Source Files</Filter>
+    </QtMoc>
+    <QtMoc Include="DisplayOfModels.h">
+      <Filter>Source Files</Filter>
+    </QtMoc>
+    <QtMoc Include="DialogOptions.h">
+      <Filter>Source Files</Filter>
+    </QtMoc>
   </ItemGroup>
 </Project>

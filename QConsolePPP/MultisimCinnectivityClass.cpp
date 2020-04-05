@@ -53,13 +53,13 @@ vector<string> MultisimConnectivity::getStringValues(_variant_t result_of_operat
 		for (int i = 0; i < cnt_elements; ++i)  // iterate through returned values
 		{
 			BSTR lVal = pVals[i];
-			values.push_back(move(bstr_to_str(lVal)));
+			values.push_back(bstr_to_str(lVal));
 			cout << values[i] << endl;
 		}
 		SafeArrayUnaccessData(arr);
 	}
 	else {
-		throw invalid_argument("Unsucceded opening of array with data");
+		return values;
 	}
 	return values;
 }
@@ -89,7 +89,7 @@ vector<double> MultisimConnectivity::getDoubleValues(_variant_t result_of_operat
 		SafeArrayUnaccessData(arr);
 	}
 	else {
-		throw invalid_argument("Unsucceded opening of array with data");
+		return values;
 	}
 	return values;
 }
@@ -117,4 +117,57 @@ vector<double> MultisimConnectivity::getDoubleValuesOutputs() {
 		M_Cuircuit_ptr->StopSimulation();
 	}
 	return outputs_values;
+}
+
+
+vector<string> MultisimConnectivity::getSchemeResistorsNames() {
+	return this->getStringValues(M_Cuircuit_ptr->EnumComponents(ComponentResistor));
+}
+
+vector<string> MultisimConnectivity::getSchemeCapacitorsNames() {
+	return this->getStringValues(M_Cuircuit_ptr->EnumComponents(ComponentCapacitor));
+}
+
+vector<string> MultisimConnectivity::getSchemeInductorNames() {
+	return this->getStringValues(M_Cuircuit_ptr->EnumComponents(ComponentInductor));
+}
+
+vector<double> MultisimConnectivity::getSchemeNominalsFromMask(vector<string> Masks_of_resistors) {
+	vector<double> array_of_nominals;
+	for (auto it = Masks_of_resistors.begin(); it != Masks_of_resistors.end(); it++) {
+		double tmp;
+		M_Cuircuit_ptr->get_RLCValue((_bstr_t)it->c_str(), &tmp);
+		array_of_nominals.push_back(tmp);
+	}
+	return array_of_nominals;
+}
+
+void MultisimConnectivity::FillOneTypeComponents(vector<string>& masks, vector<double>& nominals_values, TypeOfComponent t, vector<_component>& c_list) {
+	for (size_t i = 0; i < masks.size(); i++) {
+		_component tmp;
+		tmp.scheme_mark = masks[i];
+		tmp.nominal = nominals_values[i];
+		tmp.type_component = t;
+		tmp.model_name = "";
+		c_list.push_back(tmp);
+	}
+}
+
+void MultisimConnectivity::FillListComponent(vector<_component>& c_list) {
+	vector<string> masks = this->getSchemeResistorsNames();
+	vector<double> nominals_values = this->getSchemeNominalsFromMask(masks);
+	// Fill component_list
+	this->FillOneTypeComponents(masks, nominals_values, TypeOfComponent::ComponentResistor, c_list);
+	masks = this->getSchemeCapacitorsNames();
+	nominals_values = this->getSchemeNominalsFromMask(masks);
+	this->FillOneTypeComponents(masks, nominals_values, TypeOfComponent::ComponentCapacitor, c_list);
+	masks = this->getSchemeInductorNames();
+	nominals_values = this->getSchemeNominalsFromMask(masks);
+	this->FillOneTypeComponents(masks, nominals_values, TypeOfComponent::ComponentInductor, c_list);
+}
+
+QString MultisimConnectivity::getSchemeImage(QString path) {
+	_bstr_t bstr_path = (_bstr_t)(path.toStdString() + "\Scheme_image.jpg").c_str();
+	QString result = M_Cuircuit_ptr->GetCircuitImage(CircuitImageJPG, bstr_path);
+	return result;
 }
