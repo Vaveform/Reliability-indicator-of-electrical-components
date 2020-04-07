@@ -16,7 +16,7 @@ public:
 	DialogOptions(QWidget* widget = nullptr);
 	~DialogOptions();
 	double getPriemka();
-	double getTempreture();
+	QString getTempreture();
 	void ShowFromMainWindow();
 private slots:
 	void accept();
@@ -31,5 +31,5 @@ private:
 	QLabel *label_2;
 	QComboBox *comboBox_2;
 	double Priemka;
-	double Tempreture;
+	QString Tempreture;
 };

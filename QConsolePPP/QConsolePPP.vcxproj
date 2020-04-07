@@ -88,13 +88,15 @@
     <ClCompile Include="DisplayOfModels.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainwindow.cpp" />
-    <ClCompile Include="MultisimCinnectivityClass.cpp" />
+    <ClCompile Include="MultisimConnectivityClass.cpp" />
+    <ClCompile Include="QtWorkingWithDataBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="mainwindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BarChart.h" />
+    <ClInclude Include="QtWorkingWithDataBase.h" />
     <QtMoc Include="DialogOptions.h" />
     <QtMoc Include="DisplayOfModels.h" />
     <ClInclude Include="ComponentList.h" />

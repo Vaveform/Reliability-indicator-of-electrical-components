@@ -177,17 +177,30 @@ void MainWindow::OpenFile() {
 		"Multisim files (*.ms14*)");
 	lineEdit->setText(*scheme_path);
 	std::cout << scheme_path << std::endl;
-	components.ClearListComponent();
-	MultisimApp->OpenScheme(scheme_path);
-	image_object->load(MultisimApp->getSchemeImage(QDir::currentPath()));
-	image_label->setPixmap(QPixmap::fromImage(*image_object));
-	image_label->adjustSize();
-	MultisimApp->FillListComponent(components.getRefComponentList());
-	table2->setColumnCount(components.getRefComponentList().size());
-	table2->setHorizontalHeaderLabels(components.getListOfSchemeMarks());
-	Row_of_models = new QTableWidgetItem[components.getRefComponentList().size()];
-	for (size_t i = 0; i < components.getRefComponentList().size(); i++) {
-		table2->setItem(0, i, &Row_of_models[i]);
+	try {
+		MultisimApp->ClearProbes();
+		components.ClearListComponent();
+		MultisimApp->OpenScheme(scheme_path);
+		image_object->load(MultisimApp->getSchemeImage(QDir::currentPath()));
+		image_label->setPixmap(QPixmap::fromImage(*image_object));
+		image_label->adjustSize();
+		MultisimApp->FillListComponent(components);
+		table2->setColumnCount(components.getRefComponentList().size());
+		table2->setHorizontalHeaderLabels(components.getListOfSchemeMarks());
+		Row_of_models = new QTableWidgetItem[components.getRefComponentList().size()];
+		for (size_t i = 0; i < components.getRefComponentList().size(); i++) {
+			table2->setItem(0, i, &Row_of_models[i]);
+		}
+		MultisimApp->FillProbes(6000);
+		map<string, double> test = MultisimApp->getProbesValues();
+		MultisimApp->FillProbesForComponents(components);
+		for (auto it = components.getRefComponentList().begin(); it != components.getRefComponentList().end(); it++) {
+			cout << "Mark " << it->scheme_mark << " Nominal " << it->nominal << " Model name " << it->model_name.toStdString() << " Probe value " << it->probe_value << endl;
+		}
+	}
+	catch (...) {
+		QMessageBox::warning(this, "\320\237\321\200\320\265\320\264\321\203\320\277\321\200\320\265\320\266\320\264\320\265\320\275\320\270\320\265",
+			"\320\241\320\273\321\203\321\207\320\270\320\273\320\260\321\201\321\214 \320\276\321\210\320\270\320\261\320\272\320\260. \320\237\320\276\320\266\320\260\320\273\321\203\320\271\321\201\321\202\320\260 \320\277\321\200\320\276\320\262\320\265\321\200\321\202\320\265 \321\201\321\205\320\265\320\274\321\203 \320\270 \320\277\320\276\320\262\321\202\320\276\321\200\320\270\321\202\320\265 \321\200\320\260\321\201\321\207\321\221\321\202.");
 	}
 }
 
@@ -200,19 +213,6 @@ void MainWindow::Calculate() {
 		QMessageBox::warning(this, "\320\237\321\200\320\265\320\264\321\203\320\277\321\200\320\265\320\266\320\264\320\265\320\275\320\270\320\265",
 			"\320\222\321\213 \320\275\320\265 \320\262\321\213\320\261\321\200\320\260\320\273\320\270 \321\201\321\205\320\265\320\274\321\203 \320\264\320\273\321\217 \321\200\320\260\321\201\321\207\321\221\321\202\320\260");
 	}
-	//else {
-	//	try {
-	//		MultisimApp->OpenScheme(scheme_path);
-	//		chart->SetValues(MultisimApp->getStringValuesOutputs(), MultisimApp->getDoubleValuesOutputs());
-	//		chartView->setChart(chart->getChart());
-	//	}
-	//	catch (_com_error& ex) {
-	//		cout << ex.Description() << endl;
-	//	}
-	//}
-	for (auto it = components.getRefComponentList().begin(); it != components.getRefComponentList().end(); it++) {
-		cout << it->scheme_mark << " " << it->model_name.toStdString() << endl;
-	}
 }
 
 void MainWindow::OpenOptions() {
@@ -221,7 +221,7 @@ void MainWindow::OpenOptions() {
 
 void MainWindow::ModelSelection() {
 	models->setSchemeComponent(&components.FindByMark(table2->horizontalHeaderItem(table2->currentColumn())->text().toStdString()));
-	models->ShowFromMainWindow();
+	models->ShowFromMainWindow(dialogOptions->getPriemka(), dialogOptions->getTempreture());
 	table2->item(table2->currentRow(), table2->currentColumn())->setText(models->getCurrentcomponent()->model_name);
 }
 

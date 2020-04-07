@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <map>
 #include <QString>
 #include <string>
 #include <QStringList>
@@ -17,6 +18,8 @@ struct _component {
 	double nominal;
 	TypeOfComponent type_component;
 	QString model_name;
+	double probe_value;
+	double realibility_idx;
 };
 
 

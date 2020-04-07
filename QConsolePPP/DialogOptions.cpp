@@ -55,7 +55,7 @@ DialogOptions::DialogOptions(QWidget* widget) {
 	comboBox_2->setItemText(0, QCoreApplication::translate("dialog", "5", nullptr));
 	comboBox_2->setItemText(1, QCoreApplication::translate("dialog", "9", nullptr));
 
-	Tempreture = comboBox->itemText(0).toDouble();
+	Tempreture = comboBox->itemText(0);
 	Priemka = comboBox_2->itemText(0).toDouble();
 
     connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
@@ -79,7 +79,7 @@ double DialogOptions::getPriemka() {
 	return Priemka;
 }
 
-double DialogOptions::getTempreture() {
+QString DialogOptions::getTempreture() {
 	return Tempreture;
 }
 
@@ -94,6 +94,6 @@ void DialogOptions::reject() {
 void DialogOptions::accept() {
 	Tempreture = comboBox->currentText().toDouble();
 	Priemka = comboBox_2->currentText().toDouble();
-	std::cout << this->getPriemka() << " " << this->getTempreture() << std::endl;
+	std::cout << this->getPriemka() << " " << this->getTempreture().toStdString() << std::endl;
 	dialog->close();
 }

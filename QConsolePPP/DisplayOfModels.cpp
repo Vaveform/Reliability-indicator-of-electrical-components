@@ -24,6 +24,8 @@ DisplayOfModels::DisplayOfModels(QWidget* widget) {
 	tableWidget = new QTableView(dialog);
 	tableWidget->setObjectName(QString::fromUtf8("tableWidget"));
 	tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+	tableWidget->horizontalHeader()->setDisabled(TRUE);
+	tableWidget->verticalHeader()->setDisabled(TRUE);
 
 
 	verticalLayout->addWidget(tableWidget);
@@ -48,22 +50,20 @@ DisplayOfModels::DisplayOfModels(QWidget* widget) {
 	qry = new QSqlQuery();
 	sql_request = new QString();
 
+	selected_model_name = new QString();
+
 	connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
 	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 	connect(pushButton, SIGNAL(released()), this, SLOT(OpenDB()));
 	connect(tableWidget, &QTableView::pressed, this, &DisplayOfModels::SetSelectedModel);
-
 }
 
 
 void DisplayOfModels::accept() {
-	if (selected_component->model_name.isEmpty()) {
-		QMessageBox::warning(this ,"\320\237\321\200\320\265\320\264\321\203\320\277\321\200\320\265\320\266\320\264\320\265\320\275\320\270\320\265",
-			"\320\222\321\213 \320\275\320\265 \320\262\321\213\320\261\321\200\320\260\320\273\320\270 \320\274\320\276\320\264\320\265\320\273\321\214");
-	}
-	else {
-		dialog->close();
-	}
+	selected_component->model_name = *selected_model_name;
+	// Тут будет расчёт показателей
+	FillComponent(db, selected_component, selected_priemka, selected_tempreture);
+	dialog->close();
 }
 
 void DisplayOfModels::reject() {
@@ -76,34 +76,16 @@ void DisplayOfModels::setSchemeComponent(_component* c) {
 
 void DisplayOfModels::FindAvailableComponents() {
 	if (selected_component->type_component == TypeOfComponent::ComponentResistor) {
-		db->open();
 		*sql_request = "SELECT Model, Class, Group_Model FROM Resistors";
-		qry->exec(*sql_request);
-		QueryModel->setQuery(*qry);
-		tableWidget->setModel(QueryModel);
-		tableWidget->resizeRowsToContents();
-		tableWidget->resizeColumnsToContents();
-		db->close();
+		SelectionOfModelInTableView(db, sql_request, qry, QueryModel, tableWidget);
 	}
 	else if (selected_component->type_component == TypeOfComponent::ComponentCapacitor) {
-		db->open();
 		*sql_request = "SELECT Model, Class, Group_Model FROM Condensatory";
-		qry->exec(*sql_request);
-		QueryModel->setQuery(*qry);
-		tableWidget->setModel(QueryModel);
-		tableWidget->resizeRowsToContents();
-		tableWidget->resizeColumnsToContents();
-		db->close();
+		SelectionOfModelInTableView(db, sql_request, qry, QueryModel, tableWidget);
 	}
 	else if (selected_component->type_component == TypeOfComponent::ComponentInductor) {
-	    db->open();
 		*sql_request = "SELECT Model, Class, Group_Model FROM Drosseli";
-		qry->exec(*sql_request);
-		QueryModel->setQuery(*qry);
-		tableWidget->setModel(QueryModel);
-		tableWidget->resizeRowsToContents();
-		tableWidget->resizeColumnsToContents();
-		db->close();
+		SelectionOfModelInTableView(db, sql_request, qry, QueryModel, tableWidget);
 	}
 }
 
@@ -118,14 +100,15 @@ void DisplayOfModels::OpenDB() {
 	this->FindAvailableComponents();
 }
 
-void DisplayOfModels::ShowFromMainWindow() {
+void DisplayOfModels::ShowFromMainWindow(double priemka, QString tempreture) {
 	this->FindAvailableComponents();
+	this->selected_priemka = priemka;
+	this->selected_tempreture = tempreture;
 	dialog->exec();
-	//dialog->show();
 }
 
 void DisplayOfModels::SetSelectedModel() {
-	selected_component->model_name = tableWidget->selectionModel()->selectedRows(0).value(0).data().toString();
+	*selected_model_name = tableWidget->selectionModel()->selectedRows(0).value(0).data().toString();
 }
 
 _component* DisplayOfModels::getCurrentcomponent() {
@@ -133,6 +116,7 @@ _component* DisplayOfModels::getCurrentcomponent() {
 }
 
 DisplayOfModels::~DisplayOfModels() {
+	delete selected_model_name;
 	delete path_to_db;
 	delete buttonBox;
 	delete tableWidget;

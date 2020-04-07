@@ -30,9 +30,6 @@
     <ClCompile Include="BarChart.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MultisimCinnectivityClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DialogOptions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -40,6 +37,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ComponentList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MultisimConnectivityClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QtWorkingWithDataBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -51,6 +54,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="ComponentList.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="QtWorkingWithDataBase.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
