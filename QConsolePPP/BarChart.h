@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 
-class MyChart : public QWidget {
+class Chart : public QWidget {
 private:
 	QBarSet *set;
 	QChart *chart;
@@ -14,8 +14,8 @@ private:
 	QBarCategoryAxis *axisX;
 	QValueAxis *axisY;
 public:
-	MyChart();
-	~MyChart();
+	Chart();
+	~Chart();
 	void SetValues(std::vector<std::string> names, std::vector<double> values);
 	QChart* getChart();
 };

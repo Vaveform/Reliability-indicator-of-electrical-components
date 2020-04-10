@@ -19,14 +19,16 @@
 #include <QMenu>
 #include <QDir>
 #include <QStringLiteral>
+#include "QtWorkingWithDatabase.h"
 #include "BarChart.h"
 #include "MultisimConnectivityClass.h"
 #include "DialogOptions.h"
 #include "DisplayOfModels.h"
-
-namespace Ui {
-	class MainWindow;
-}
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+#include <cmath>
+#include <limits>
 
 class MainWindow : public QMainWindow {
 	Q_OBJECT
@@ -44,20 +46,15 @@ private:
 	QWidget *tab_2;
 	QPushButton *pushButton_2;
 	QPushButton *pushButton_3;
-	QMenuBar *menubar;
 	QStatusBar *statusbar;
-	QString* scheme_path;
+    QString scheme_path;
 	QVBoxLayout *verticalLayout_3;
 	QVBoxLayout *verticalLayout_4;
 	QTableView *tableView;
 	QChartView *chartView;
-	MyChart *chart;
+	Chart *chart;
 	QTableWidget* table;
 	DialogOptions* dialogOptions;
-	QAction* action_1;
-	QMenu* menu;
-	QMenu* menu_1;
-	QMenu* menu_2;
 	DisplayOfModels* models;
 	QWidget* tab_3;
 	QVBoxLayout* verticalLayout_5;
@@ -69,9 +66,12 @@ private:
 	QLabel* image_label;
 	Component_List components;
 	QTableWidgetItem* Row_of_models;
+	QTableWidgetItem* Column_of_models_names;
+	QTableWidgetItem* Column_of_idx;
+	QTableWidgetItem* Column_of_marks;
 public:
-	explicit MainWindow();
-	virtual ~MainWindow();
+	MainWindow();
+	~MainWindow();
 private slots:
 	void OpenFile();
 	void CompleteWork();

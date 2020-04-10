@@ -22,71 +22,6 @@
 #include "ComponentList.h"
 
 
-using namespace MultisimInterface;
-using namespace std;
-
-static const QString path_to_scheme = "E:\\Multisim_connection\\Test_scheme.ms14";
-static const QString path_to_image = "E:\\Multisim_connection\\Scheme_image.jpg";
-
-#ifdef Q_OS_WIN32
-QString env = getenv("SYSTEMROOT");
-#endif
-
-vector<string> getStringValues(_variant_t result_of_operation) {
-	vector<string> values;
-	SAFEARRAY* arr = result_of_operation.parray;
-	BSTR* pVals = nullptr;
-	HRESULT hr = SafeArrayAccessData(arr, (void**)&pVals);
-	if (SUCCEEDED(hr)) {
-		long lowerBound, upperBound;
-		SafeArrayGetLBound(arr, 1, &lowerBound);
-		SafeArrayGetUBound(arr, 1, &upperBound);
-
-		long cnt_elements = upperBound - lowerBound + 1;
-		for (int i = 0; i < cnt_elements; ++i)  // iterate through returned values
-		{
-			BSTR lVal = pVals[i];
-			values.push_back(bstr_to_str(lVal));
-			cout << values[i] << endl;
-		}
-		SafeArrayUnaccessData(arr);
-	}
-	else {
-		return values;
-	}
-	return values;
-}
-
-double getDoubleValues(_variant_t result_of_operation) {
-	vector<double> values;
-	SAFEARRAY* arr = result_of_operation.parray;
-	//cout << "Num dims of output array: " << arr->cDims << endl;
-	double* pVals = nullptr;
-	HRESULT hr = SafeArrayAccessData(arr, (void**)&pVals);
-	double Avg = 0;
-	double nums = 0;
-	if (SUCCEEDED(hr)) {
-		long lowerBound, upperBound;
-		SafeArrayGetLBound(arr, 1, &lowerBound);
-		SafeArrayGetUBound(arr, 1, &upperBound);
-
-		long cnt_elements = upperBound - lowerBound + 1;
-		double* lVal = &pVals[0];
-		for (int i = 0; i < 1000; i++) {
-			if (i % 2 == 1) {
-				Avg += lVal[i];
-				nums += 1;
-			}
-		}
-		Avg /= nums;
-	}
-	else {
-		return Avg;
-	}
-	return Avg;
-}
-
-
 
 int main(int argc, char *argv[])
 {
@@ -139,7 +74,7 @@ int main(int argc, char *argv[])
 		cout << Class.toStdString() << " " << Group_Model.toStdString() << " " << Model.toStdString() << endl;
 	}
 	mydb.close();*/
-	MainWindow w;
+    MainWindow w;
 	/*::CoUninitialize();*/
 	return app.exec();
 

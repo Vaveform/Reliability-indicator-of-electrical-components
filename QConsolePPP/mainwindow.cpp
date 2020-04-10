@@ -7,7 +7,6 @@
 #include <iostream>
 
 MainWindow::MainWindow() {
-	scheme_path = new QString();
 	centralwidget = new QWidget(&mainwindow);
 	centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
 	verticalLayout_2 = new QVBoxLayout(centralwidget);
@@ -55,10 +54,6 @@ MainWindow::MainWindow() {
 	verticalLayout_2->addLayout(verticalLayout);
 
 	mainwindow.setCentralWidget(centralwidget);
-	menubar = new QMenuBar(&mainwindow);
-	menubar->setObjectName(QString::fromUtf8("menubar"));
-	menubar->setGeometry(QRect(0, 0, 1030, 21));
-	mainwindow.setMenuBar(menubar);
 	statusbar = new QStatusBar(&mainwindow);
 	statusbar->setObjectName(QString::fromUtf8("statusbar"));
 	mainwindow.setStatusBar(statusbar);
@@ -68,7 +63,7 @@ MainWindow::MainWindow() {
 	chartView = new QChartView(tab);
 	chartView->setObjectName(QString::fromUtf8("chart_view"));
 	verticalLayout_3->addWidget(chartView);
-	chart = new MyChart();
+	chart = new Chart();
 	chartView->setChart(chart->getChart());
 	chartView->setRenderHint(QPainter::HighQualityAntialiasing);
 
@@ -79,7 +74,9 @@ MainWindow::MainWindow() {
 	table->setColumnCount(3);
 	table->setHorizontalHeaderLabels({ "\320\236\320\261\320\276\320\267\320\275\320\260\321\207\320\265\320\275\320\270\320\265 \321\215\320\273\320\265\320\274\320\265\320\275\321\202\320\260  \320\275\320\260 \321\201\321\205\320\265\320\274\320\265",
 		 "\320\230\320\274\321\217 \320\274\320\276\320\264\320\265\320\273\320\270",
-		 "\320\255\320\272\321\201\320\277\320\273\321\203\320\260\321\202\320\260\321\206\320\270\320\276\320\275\320\275\320\276\320\271 \320\270\320\275\321\202\320\265\320\275\321\201\320\270\320\262\320\275\320\276\321\201\321\202\321\214 \320\276\321\202\320\272\320\260\320\267\320\276\320\262, (lambda)" });
+		 "\320\255\320\272\321\201\320\277\320\273\321\203\320\260\321\202\320\260\321\206\320\270\320\276\320\275\320\275\320\276\320\271 \320\270\320\275\321\202\320\265\320\275\321\201\320\270\320\262\320\275\320\276\321\201\321\202\321\214 \320\276\321\202\320\272\320\260\320\267\320\276\320\262" });
+	
+	table->setUpdatesEnabled(TRUE);
 	verticalLayout_4->addWidget(table);
 
 	tab_3 = new QWidget();
@@ -107,7 +104,7 @@ MainWindow::MainWindow() {
 
 
 
-	mainwindow.setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
+	mainwindow.setWindowTitle(QCoreApplication::translate("MainWindow", "\320\234\320\276\320\264\321\203\320\273\321\214 \320\276\321\206\320\265\320\275\320\272\320\270 \320\275\320\260\320\264\321\221\320\266\320\275\320\276\321\201\321\202\320\270 \320\240\320\255\320\241", nullptr));
 	lineEdit->setText(QString());
 	pushButton->setText(QCoreApplication::translate("MainWindow",
 		"\320\236\321\202\320\272\321\200\321\213\321\202\321\214 \321\204\320\260\320\271\320\273 \321\201\320\276 \321\201\321\205\320\265\320\274\320\276\320\271 (.ms14)", 
@@ -133,74 +130,48 @@ MainWindow::MainWindow() {
 
 	MultisimApp = new MultisimConnectivity();
 	dialogOptions = new DialogOptions(centralwidget);
-	menu = new QMenu(menubar);
-	menu->setObjectName(QString::fromUtf8("menu"));
-	menu_1 = new QMenu(menubar);
-	menu_1->setObjectName(QString::fromUtf8("menu_1"));
-	menu_2 = new QMenu(menubar);
-	menu_2->setObjectName(QString::fromUtf8("menu_1"));
-	mainwindow.setMenuBar(menubar);
-	menu->setTitle(QCoreApplication::translate("MainWindow", "\320\235\320\260\321\201\321\202\321\200\320\276\320\271\320\272\320\270", nullptr));
-	menu_1->setTitle(QCoreApplication::translate("MainWindow", "\320\222\321\213\321\205\320\276\320\264", nullptr));
-	menu_2->setTitle(QCoreApplication::translate("MainWindow", "\320\236 \320\277\321\200\320\276\320\263\321\200\320\260\320\274\320\274\320\265", nullptr));
-
-	menu->addAction("\320\235\320\260\320\271\321\201\321\202\321\200\320\276\320\271\320\272\320\260 \321\200\320\265\320\266\320\270\320\274\320\260 \321\200\320\260\320\261\320\276\321\202\321\213" ,
-		this,
-		SLOT(OpenOptions()));
-
-	menubar->addAction(menu->menuAction());
-	menubar->addAction(menu_1->menuAction());
-	menubar->addAction(menu_2->menuAction());
 
 	models = new DisplayOfModels(centralwidget);
 
 	connect(pushButton, SIGNAL(released()), this, SLOT(OpenFile()));
 	connect(pushButton_3, SIGNAL(released()), this, SLOT(CompleteWork()));
-	connect(pushButton_2, SIGNAL(released()), this, SLOT(Calculate()));
+	connect(pushButton_2, SIGNAL(released()), this, SLOT(OpenOptions()));
 	connect(table2, &QTableWidget::cellPressed, this, &MainWindow::ModelSelection);
+	connect(dialogOptions->getButtonBox(), SIGNAL(accepted()), this, SLOT(Calculate()));
 
 	table->resizeColumnsToContents();
 	table->resizeRowsToContents();
+	Column_of_idx = new QTableWidgetItem[1];
+	Column_of_marks = new QTableWidgetItem[1];
+	Column_of_models_names = new QTableWidgetItem[1];
 
 	mainwindow.showMaximized();
 }
 
 
 void MainWindow::OpenFile() {
-	if (!scheme_path->isEmpty()) {
+	if (!scheme_path.isEmpty()) {
 		delete[] Row_of_models;
 	}
-	*scheme_path = QFileDialog::getOpenFileName(
+	scheme_path = QFileDialog::getOpenFileName(
 		this,
 		"Open Multisim File",
 		QDir::currentPath(),
 		"Multisim files (*.ms14*)");
-	lineEdit->setText(*scheme_path);
-	std::cout << scheme_path << std::endl;
-	try {
-		MultisimApp->ClearProbes();
-		components.ClearListComponent();
-		MultisimApp->OpenScheme(scheme_path);
-		image_object->load(MultisimApp->getSchemeImage(QDir::currentPath()));
-		image_label->setPixmap(QPixmap::fromImage(*image_object));
-		image_label->adjustSize();
-		MultisimApp->FillListComponent(components);
-		table2->setColumnCount(components.getRefComponentList().size());
-		table2->setHorizontalHeaderLabels(components.getListOfSchemeMarks());
-		Row_of_models = new QTableWidgetItem[components.getRefComponentList().size()];
-		for (size_t i = 0; i < components.getRefComponentList().size(); i++) {
-			table2->setItem(0, i, &Row_of_models[i]);
-		}
-		MultisimApp->FillProbes(6000);
-		map<string, double> test = MultisimApp->getProbesValues();
-		MultisimApp->FillProbesForComponents(components);
-		for (auto it = components.getRefComponentList().begin(); it != components.getRefComponentList().end(); it++) {
-			cout << "Mark " << it->scheme_mark << " Nominal " << it->nominal << " Model name " << it->model_name.toStdString() << " Probe value " << it->probe_value << endl;
-		}
-	}
-	catch (...) {
-		QMessageBox::warning(this, "\320\237\321\200\320\265\320\264\321\203\320\277\321\200\320\265\320\266\320\264\320\265\320\275\320\270\320\265",
-			"\320\241\320\273\321\203\321\207\320\270\320\273\320\260\321\201\321\214 \320\276\321\210\320\270\320\261\320\272\320\260. \320\237\320\276\320\266\320\260\320\273\321\203\320\271\321\201\321\202\320\260 \320\277\321\200\320\276\320\262\320\265\321\200\321\202\320\265 \321\201\321\205\320\265\320\274\321\203 \320\270 \320\277\320\276\320\262\321\202\320\276\321\200\320\270\321\202\320\265 \321\200\320\260\321\201\321\207\321\221\321\202.");
+	lineEdit->setText(scheme_path);
+	std::cout << scheme_path.toStdString() << std::endl;
+	MultisimApp->ClearProbes();
+	components.ClearListComponent();
+	MultisimApp->OpenScheme(&scheme_path);
+	image_object->load(MultisimApp->getSchemeImage(QDir::currentPath()));
+	image_label->setPixmap(QPixmap::fromImage(*image_object));
+	image_label->adjustSize();
+	MultisimApp->FillListComponent(components);
+	table2->setColumnCount(components.getRefComponentList().size());
+	table2->setHorizontalHeaderLabels(components.getListOfSchemeMarks());
+	Row_of_models = new QTableWidgetItem[components.getRefComponentList().size()];
+	for (size_t i = 0; i < components.getRefComponentList().size(); i++) {
+		table2->setItem(0, i, &Row_of_models[i]);
 	}
 }
 
@@ -208,20 +179,74 @@ void MainWindow::CompleteWork() {
 	mainwindow.close();
 }
 
-void MainWindow::Calculate() {
-	if (scheme_path->isEmpty()) {
+void MainWindow::OpenOptions() {
+	if (scheme_path.isEmpty()) {
 		QMessageBox::warning(this, "\320\237\321\200\320\265\320\264\321\203\320\277\321\200\320\265\320\266\320\264\320\265\320\275\320\270\320\265",
 			"\320\222\321\213 \320\275\320\265 \320\262\321\213\320\261\321\200\320\260\320\273\320\270 \321\201\321\205\320\265\320\274\321\203 \320\264\320\273\321\217 \321\200\320\260\321\201\321\207\321\221\321\202\320\260");
 	}
+	else {
+		dialogOptions->ShowFromMainWindow();
+	}
 }
 
-void MainWindow::OpenOptions() {
-	dialogOptions->ShowFromMainWindow();
+void MainWindow::Calculate() {
+	try {
+		MultisimApp->FillProbes(dialogOptions->getHz());
+		MultisimApp->FillProbesForComponents(components);
+		vector<string> Names_to_Chart;
+		vector<double> Values_to_Chart;
+		vector<QString> Model_names;
+		for (auto it = components.getRefComponentList().begin(); it != components.getRefComponentList().end(); it++) {
+			if (!it->model_name.isEmpty()) {
+				Names_to_Chart.push_back(it->scheme_mark);
+				FillComponent(&(*it), dialogOptions->getPriemka(), dialogOptions->getTempreture());
+				cout << it->realibility_idx << endl;
+				Values_to_Chart.push_back(it->realibility_idx);
+				Model_names.push_back(it->model_name);
+			}
+		}
+		if (Model_names.size() != 0) {
+			chart->SetValues(Names_to_Chart, Values_to_Chart);
+			delete[] Column_of_idx;
+			delete[] Column_of_marks;
+			delete[] Column_of_models_names;
+			Column_of_idx = new QTableWidgetItem[Values_to_Chart.size()];
+			Column_of_marks = new QTableWidgetItem[Names_to_Chart.size()];
+			Column_of_models_names = new QTableWidgetItem[Model_names.size()];
+			table->setRowCount(Values_to_Chart.size());
+			for (size_t i = 0; i < Values_to_Chart.size(); i++) {
+				table->setItem(i, 0, &Column_of_marks[i]);
+				table->setItem(i, 1, &Column_of_models_names[i]);
+				table->setItem(i, 2, &Column_of_idx[i]);
+				Column_of_marks[i].setText(QString::fromStdString(Names_to_Chart[i]));
+				Column_of_models_names[i].setText(Model_names[i]);
+				cout << to_string(Values_to_Chart[i]) << endl;
+				Column_of_idx[i].setText(QString::number(Values_to_Chart[i], 'f', 15));
+			}
+		}
+		else {
+			QMessageBox::warning(this, "\320\237\321\200\320\265\320\264\321\203\320\277\321\200\320\265\320\266\320\264\320\265\320\275\320\270\320\265",
+				"\320\235\320\265 \320\267\320\260\320\264\320\260\320\275\321\213 \320\270\320\274\320\265\320\275\320\260 \320\274\320\276\320\264\320\265\320\273\320\265\320\271 \320\262 \"\320\232\320\276\320\274\320\277\320\276\320\275\320\265\320\275\321\202\320\260\321\205 \321\201\321\205\320\265\320\274\321\213\"");
+		}
+	}
+	catch (_com_error& ex)
+	{
+		QMessageBox::warning(this, "\320\237\321\200\320\265\320\264\321\203\320\277\321\200\320\265\320\266\320\264\320\265\320\275\320\270\320\265",
+			QString::fromStdString(bstr_to_str(ex.Description())));
+	}
+	catch (invalid_argument& in_arg) {
+		QMessageBox::warning(this, "\320\237\321\200\320\265\320\264\321\203\320\277\321\200\320\265\320\266\320\264\320\265\320\275\320\270\320\265",
+			QString::fromStdString(in_arg.what()));
+	}
+	catch (...) {
+		QMessageBox::warning(this, "\320\237\321\200\320\265\320\264\321\203\320\277\321\200\320\265\320\266\320\264\320\265\320\275\320\270\320\265",
+			"\320\241\320\273\321\203\321\207\320\270\320\273\320\260\321\201\321\214 \320\276\321\210\320\270\320\261\320\272\320\260. \320\237\320\276\320\266\320\260\320\273\321\203\320\271\321\201\321\202\320\260 \320\277\321\200\320\276\320\262\320\265\321\200\321\202\320\265 \321\201\321\205\320\265\320\274\321\203 \320\270 \320\277\320\276\320\262\321\202\320\276\321\200\320\270\321\202\320\265 \321\200\320\260\321\201\321\207\321\221\321\202.");
+	}
 }
 
 void MainWindow::ModelSelection() {
 	models->setSchemeComponent(&components.FindByMark(table2->horizontalHeaderItem(table2->currentColumn())->text().toStdString()));
-	models->ShowFromMainWindow(dialogOptions->getPriemka(), dialogOptions->getTempreture());
+	models->ShowFromMainWindow();
 	table2->item(table2->currentRow(), table2->currentColumn())->setText(models->getCurrentcomponent()->model_name);
 }
 
@@ -231,14 +256,16 @@ MainWindow::~MainWindow()
 	delete image_object;
 	delete image_label;
 	components.ClearListComponent();
-	if (!scheme_path->isEmpty()) {
+	if (!scheme_path.isEmpty()) {
 		delete[] Row_of_models;
 	}
+	delete[] Column_of_idx;
+	delete[] Column_of_marks;
+	delete[] Column_of_models_names;
 	delete table2;
 	delete splitter;
 	delete verticalLayout_5;
 	delete chart;
-	delete scheme_path;
 	delete table;
 	delete verticalLayout_4;
 	delete chartView;

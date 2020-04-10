@@ -39,7 +39,7 @@ DisplayOfModels::DisplayOfModels(QWidget* widget) {
 
 	path_to_db = new QString();
 
-	dialog->setWindowTitle(QCoreApplication::translate("dialog", "dialog", nullptr));
+	dialog->setWindowTitle(QCoreApplication::translate("dialog", "\320\234\320\276\320\264\320\265\320\273\321\214 \320\272\320\276\320\274\320\277\320\276\320\275\320\265\320\275\321\202\320\260", nullptr));
 	pushButton->setText(QCoreApplication::translate("Dialog", 
 		"\320\222\321\213\320\261\321\200\320\260\321\202\321\214 \320\261\320\260\320\267\321\203 \320\264\320\260\320\275\320\275\321\213\321\205 \321\200\320\260\320\264\320\270\320\276\321\215\320\273\320\265\320\274\320\265\320\275\321\202\320\276\320\262",
 		nullptr));
@@ -60,9 +60,10 @@ DisplayOfModels::DisplayOfModels(QWidget* widget) {
 
 
 void DisplayOfModels::accept() {
+	selected_component->db = *db;
 	selected_component->model_name = *selected_model_name;
-	// Тут будет расчёт показателей
-	FillComponent(db, selected_component, selected_priemka, selected_tempreture);
+	selected_model_name->clear();
+	//selected_component = nullptr;
 	dialog->close();
 }
 
@@ -87,6 +88,14 @@ void DisplayOfModels::FindAvailableComponents() {
 		*sql_request = "SELECT Model, Class, Group_Model FROM Drosseli";
 		SelectionOfModelInTableView(db, sql_request, qry, QueryModel, tableWidget);
 	}
+	else if (selected_component->type_component == TypeOfComponent::ComponentDiode) {
+		*sql_request = "SELECT Model, Class, Group_Model FROM Diodi";
+		SelectionOfModelInTableView(db, sql_request, qry, QueryModel, tableWidget);
+	}
+	else if (selected_component->type_component == TypeOfComponent::ComponentTransistor) {
+		*sql_request = "SELECT Model, Class, Group_Model FROM Tranzistory";
+		SelectionOfModelInTableView(db, sql_request, qry, QueryModel, tableWidget);
+	}
 }
 
 void DisplayOfModels::OpenDB() {
@@ -98,12 +107,11 @@ void DisplayOfModels::OpenDB() {
 	lineEdit->setText(*path_to_db);	
 	db->setDatabaseName(*path_to_db);
 	this->FindAvailableComponents();
+	selected_component->db = *db;
 }
 
-void DisplayOfModels::ShowFromMainWindow(double priemka, QString tempreture) {
+void DisplayOfModels::ShowFromMainWindow() {
 	this->FindAvailableComponents();
-	this->selected_priemka = priemka;
-	this->selected_tempreture = tempreture;
 	dialog->exec();
 }
 

@@ -1,12 +1,15 @@
 #include "BarChart.h"
 
-MyChart::MyChart() {
+Chart::Chart() {
 	set = new QBarSet(NULL);
 	series = new QBarSeries();
 	series->append(set);
 	chart = new QChart();
 	chart->addSeries(series);
-	chart->setTitle("Reliability indexies");
+	QFont font;
+	font.setPointSize(24);
+	chart->setTitle("\320\255\320\272\321\201\320\277\320\273\321\203\320\260\321\202\320\260\321\206\320\270\320\276\320\275\320\275\320\260\321\217 \320\270\320\275\321\202\320\265\320\275\321\201\320\270\320\262\320\275\320\276\321\201\321\202\321\214 \320\276\321\202\320\272\320\260\320\267\320\276\320\262");
+	chart->setTitleFont(font);
 	chart->setAnimationOptions(QChart::AnimationOption::AllAnimations);
 	axisX = new QBarCategoryAxis();
 	chart->addAxis(axisX, Qt::AlignBottom);
@@ -18,7 +21,7 @@ MyChart::MyChart() {
 }
 
 
-MyChart::~MyChart() {
+Chart::~Chart() {
 	delete axisY;
 	delete axisX;
 	delete set;
@@ -27,7 +30,7 @@ MyChart::~MyChart() {
 }
 
 
-void MyChart::SetValues(std::vector<std::string> names, std::vector<double> values) {
+void Chart::SetValues(std::vector<std::string> names, std::vector<double> values) {
 	if (names.size() != values.size()) {
 		throw std::invalid_argument("Sizes not equal");
 	}
@@ -46,6 +49,6 @@ void MyChart::SetValues(std::vector<std::string> names, std::vector<double> valu
 }
 
 
-QChart* MyChart::getChart() {
+QChart* Chart::getChart() {
 	return chart;
 }

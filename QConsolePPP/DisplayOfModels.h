@@ -43,8 +43,6 @@ private:
 	QSqlQuery* qry;
 	QSqlDatabase* db;
 	QString* selected_model_name;
-	double selected_priemka;
-	QString selected_tempreture;
 private slots:
 	void accept();
 	void reject();
@@ -54,6 +52,6 @@ private:
 	void FindAvailableComponents();
 public:
 	void setSchemeComponent(_component* c);
-	void ShowFromMainWindow(double priemka, QString tempreture);
+	void ShowFromMainWindow();
 	_component* getCurrentcomponent();
 };

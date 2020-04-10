@@ -14,7 +14,7 @@ DialogOptions::DialogOptions(QWidget* widget) {
 	buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
 	splitter = new QSplitter(dialog);
 	splitter->setObjectName(QString::fromUtf8("splitter"));
-	splitter->setGeometry(QRect(10, 20, 491, 21));
+	splitter->setGeometry(QRect(20, 20, 471, 21));
 	splitter->setOrientation(Qt::Horizontal);
 	label = new QLabel(splitter);
 	label->setObjectName(QString::fromUtf8("label"));
@@ -31,7 +31,7 @@ DialogOptions::DialogOptions(QWidget* widget) {
 	splitter->addWidget(comboBox);
 	splitter_2 = new QSplitter(dialog);
 	splitter_2->setObjectName(QString::fromUtf8("splitter_2"));
-	splitter_2->setGeometry(QRect(10, 50, 491, 21));
+	splitter_2->setGeometry(QRect(20, 50, 471, 21));
 	splitter_2->setOrientation(Qt::Horizontal);
 	label_2 = new QLabel(splitter_2);
 	label_2->setObjectName(QString::fromUtf8("label_2"));
@@ -55,16 +55,68 @@ DialogOptions::DialogOptions(QWidget* widget) {
 	comboBox_2->setItemText(0, QCoreApplication::translate("dialog", "5", nullptr));
 	comboBox_2->setItemText(1, QCoreApplication::translate("dialog", "9", nullptr));
 
+	widget1 = new QWidget(dialog);
+	widget1->setObjectName(QString::fromUtf8("widget"));
+	widget1->setGeometry(QRect(20, 180, 123, 42));
+	vertical_layout_1 = new QVBoxLayout(widget1);
+	vertical_layout_1->setObjectName(QString::fromUtf8("verticalLayout"));
+	vertical_layout_1->setContentsMargins(0, 0, 0, 0);
+	radioButton = new QRadioButton(widget1);
+	radioButton->setObjectName(QString::fromUtf8("radioButton"));
+
+	vertical_layout_1->addWidget(radioButton);
+
+	radioButton_2 = new QRadioButton(widget1);
+	radioButton_2->setObjectName(QString::fromUtf8("radioButton_2"));
+
+	vertical_layout_1->addWidget(radioButton_2);
+
+	widget2 = new QWidget(dialog);
+	widget2->setObjectName(QString::fromUtf8("widget1"));
+	widget2->setGeometry(QRect(180, 170, 211, 51));
+	vertical_layout_2 = new QVBoxLayout(widget2);
+	vertical_layout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+	vertical_layout_2->setContentsMargins(0, 0, 0, 0);
+	label_3 = new QLabel(widget2);
+	label_3->setObjectName(QString::fromUtf8("label"));
+
+	vertical_layout_2->addWidget(label_3);
+
+	textEdit = new QLineEdit(widget1);
+	textEdit->setObjectName(QString::fromUtf8("textEdit"));
+	QFont font1;
+	font1.setPointSize(14);
+	textEdit->setFont(font1);
+
+	vertical_layout_2->addWidget(textEdit);
+
+	radioButton->setText(QCoreApplication::translate("dialog", "\320\237\320\265\321\200\320\265\320\274\320\265\320\275\320\275\321\213\320\271 \321\200\320\265\320\266\320\270\320\274", nullptr));
+	radioButton_2->setText(QCoreApplication::translate("dialog", "\320\237\320\276\321\201\321\202\320\276\321\217\320\275\321\213\320\271 \321\200\320\265\320\266\320\270\320\274", nullptr));
+	label_3->setText(QCoreApplication::translate("dialog", "\320\247\320\260\321\201\321\202\320\276\321\202\320\260, \320\223\321\206", nullptr));
+
+	textEdit->setText(QString::number(60000, 'f', 1));
+	Hz = 60000;
+	radioButton->setChecked(true);
 	Tempreture = comboBox->itemText(0);
 	Priemka = comboBox_2->itemText(0).toDouble();
 
     connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
 	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	connect(radioButton, SIGNAL(clicked()), this, SLOT(InputFrequency()));
+	connect(radioButton_2, SIGNAL(clicked()), this, SLOT(setDCsignal()));
 
 }
 
 
 DialogOptions::~DialogOptions() {
+	delete vertical_layout_2;
+	delete textEdit;
+	delete label_3;
+	delete radioButton_2;
+	delete radioButton;
+	delete vertical_layout_1;
+	delete widget2;
+	delete widget1;
 	delete comboBox_2;
 	delete label_2;
 	delete splitter_2;
@@ -92,8 +144,26 @@ void DialogOptions::reject() {
 }
 
 void DialogOptions::accept() {
-	Tempreture = comboBox->currentText().toDouble();
+	Tempreture = comboBox->currentText();
 	Priemka = comboBox_2->currentText().toDouble();
-	std::cout << this->getPriemka() << " " << this->getTempreture().toStdString() << std::endl;
+	Hz = textEdit->text().toDouble();
+	std::cout << Hz << " " << Tempreture.toStdString() << " " << Priemka << std::endl;
 	dialog->close();
+}
+
+void DialogOptions::InputFrequency() {
+	textEdit->setEnabled(true);
+}
+
+void DialogOptions::setDCsignal() {
+	textEdit->setText("0");
+	textEdit->setEnabled(false);
+}
+
+double DialogOptions::getHz() {
+	return Hz;
+}
+
+QDialogButtonBox* DialogOptions::getButtonBox() {
+	return buttonBox;
 }

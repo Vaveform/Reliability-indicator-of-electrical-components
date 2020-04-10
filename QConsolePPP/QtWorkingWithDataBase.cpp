@@ -67,8 +67,8 @@ double getValueFromNominalSelectiveTables(QSqlQuery* query, QString Name_of_tabl
 	}
 }
 
-void CalculateForResistors(QSqlDatabase* db, _component* c, double priemka, QString tempreture) {
-	db->open();
+void CalculateForResistors(_component* c, double priemka, QString tempreture) {
+	c->db.open();
 	c->realibility_idx = -1;
 	QSqlQuery query;
 	QString sql_request = "SELECT * FROM Resistors WHERE Model = ";
@@ -91,10 +91,11 @@ void CalculateForResistors(QSqlDatabase* db, _component* c, double priemka, QStr
 	c->realibility_idx *= getValueFromKpTables(&query, Kp_table, tempreture, nominal_ratio);
 	// Kr value
 	c->realibility_idx *= getValueFromNominalSelectiveTables(&query, Kr_table, c->nominal);
+	c->db.close();
 }
 
-void CalculateForCapacitors(QSqlDatabase* db, _component* c, double priemka, QString tempreture) {
-	db->open();
+void CalculateForCapacitors(_component* c, double priemka, QString tempreture) {
+	c->db.open();
 	c->realibility_idx = -1;
 	QSqlQuery query;
 	QString sql_request = "SELECT * FROM Condensatory WHERE Model = ";
@@ -133,11 +134,11 @@ void CalculateForCapacitors(QSqlDatabase* db, _component* c, double priemka, QSt
 	else {
 		c->realibility_idx *= getValueFromNominalSelectiveTables(&query, Kc, c->nominal);
 	}
-	db->close();
+	c->db.close();
 }
 
-void CalculateForInductors(QSqlDatabase* db, _component* c, double priemka, QString tempreture) {
-	db->open();
+void CalculateForInductors(_component* c, double priemka, QString tempreture) {
+	c->db.open();
 	c->realibility_idx = -1;
 	QSqlQuery query;
 	QString sql_request = "SELECT * FROM Drosseli WHERE Model = ";
@@ -157,18 +158,102 @@ void CalculateForInductors(QSqlDatabase* db, _component* c, double priemka, QStr
 	c->realibility_idx *= getValueFromKpTables(&query, Kp_table, tempreture, nominal_ratio);
 	// Kpr value
 	c->realibility_idx *= priemka == 5 ? 1 : 0.2;
-	db->close();
+	c->db.close();
 }
 
-void FillComponent(QSqlDatabase* db, _component* c, double priemka, QString tempreture) {
+void CalculateForDiodes(_component* c, double priemka, QString tempreture) {
+	c->db.open();
+	c->realibility_idx = -1;
+	QSqlQuery query;
+	QString sql_request = "SELECT * FROM Diodi WHERE Model = ";
+	sql_request = sql_request + "'" + c->model_name + "'";
+	query.exec(sql_request);
+	query.next();
+	double lambda = query.value(4).toDouble() / 1000000.0;
+	c->realibility_idx = lambda;
+	// Kp - nominal ratio
+	double nominal_ratio = int(c->probe_value / query.value(11).toDouble() * 10) / 10.0;
+	nominal_ratio = nominal_ratio < 0.1 ? 0.1 : nominal_ratio;
+	if (nominal_ratio > 1) {
+		throw(invalid_argument("Please, reduce voltage"));
+	}
+	QString Kp_table = query.value(5).toString();
+	QString Kpr_table = query.value(9).toString();
+	QString Ks_table = query.value(7).toString();
+	double nominal_ratio_2 = int(c->probe_value / query.value(10).toDouble() * 100) / 100.0;
+	// Kp value
+	double Kp = getValueFromKpTables(&query, Kp_table, tempreture, nominal_ratio);
+	nominal_ratio_2 = nominal_ratio_2 < 0.1 ? 0.1 : nominal_ratio_2;
+	if (Kp == 0.0) {
+		throw(invalid_argument("Please, reduce volatage or tempreture"));
+	}
+	c->realibility_idx *= Kp;
+	// Kpr value
+	if (Kpr_table == "Diodi_Kpr1") {
+		c->realibility_idx *= priemka == 5 ? 1 : 0.2;
+	}
+	else {
+		c->realibility_idx *= priemka == 5 ? 1 : 0.45;
+	}
+	// Ks
+	c->realibility_idx *= getValueFromNominalSelectiveTables(&query, Ks_table, nominal_ratio_2);
+	c->db.close();
+}
+
+void CalculateForTransistors(_component* c, double priemka, QString tempreture) {
+	c->db.open();
+	c->realibility_idx = -1;
+	QSqlQuery query;
+	QString sql_request = "SELECT * FROM Tranzistory WHERE Model = ";
+	sql_request = sql_request + "'" + c->model_name + "'";
+	query.exec(sql_request);
+	query.next();
+	double lambda = query.value(4).toDouble() / 1000000.0;
+	c->realibility_idx = lambda;
+	// Kp - nominal ratio
+	double nominal_ratio = int(c->probe_value / query.value(11).toDouble() * 10) / 10.0;
+	nominal_ratio = nominal_ratio < 0.1 ? 0.1 : nominal_ratio;
+	if (nominal_ratio > 1) {
+		throw(invalid_argument("Please, reduce voltage"));
+	}
+	QString Kp_table = query.value(5).toString();
+	QString Kpr_table = query.value(9).toString();
+	QString Ks_table = query.value(7).toString();
+	double nominal_ratio_2 = int(c->probe_value / query.value(10).toDouble() * 100) / 100.0;
+	// Kp value
+	double Kp = getValueFromKpTables(&query, Kp_table, tempreture, nominal_ratio);
+	nominal_ratio_2 = nominal_ratio_2 < 0.1 ? 0.1 : nominal_ratio_2;
+	if (Kp == 0.0) {
+		throw(invalid_argument("Please, reduce volatage or tempreture"));
+	}
+	c->realibility_idx *= Kp;
+	// Kpr value
+	if (Kpr_table == "Tranzistory_Kpr_BM") {
+		c->realibility_idx *= priemka == 5 ? 1 : 0.4;
+	}
+	else {
+		c->realibility_idx *= priemka == 5 ? 1 : 0.35;
+	}
+	// Ks
+	c->realibility_idx *= getValueFromNominalSelectiveTables(&query, Ks_table, nominal_ratio_2);
+	c->db.close();
+}
+
+void FillComponent(_component* c, double priemka, QString tempreture) {
 	if (c->type_component == TypeOfComponent::ComponentCapacitor) {
-		CalculateForCapacitors(db, c, priemka, tempreture);
+		CalculateForCapacitors(c, priemka, tempreture);
 	}
 	else if (c->type_component == TypeOfComponent::ComponentResistor) {
-		CalculateForResistors(db, c, priemka, tempreture);
+		CalculateForResistors(c, priemka, tempreture);
 	}
 	else if (c->type_component == TypeOfComponent::ComponentInductor) {
-		CalculateForInductors(db, c, priemka, tempreture);
+		CalculateForInductors(c, priemka, tempreture);
+	}
+	else if (c->type_component == TypeOfComponent::ComponentDiode) {
+		CalculateForDiodes(c, priemka, tempreture);
+	}
+	else if (c->type_component == TypeOfComponent::ComponentTransistor) {
+		CalculateForTransistors(c, priemka, tempreture);
 	}
 
 }

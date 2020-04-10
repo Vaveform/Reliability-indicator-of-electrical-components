@@ -110,9 +110,29 @@ vector<string> MultisimConnectivity::getSchemeInductorNames() {
 	return this->getStringValues(M_Cuircuit_ptr->EnumComponents(ComponentInductor));
 }
 
-vector<double> MultisimConnectivity::getSchemeNominalsFromMask(vector<string> Masks_of_resistors) {
+vector<string> MultisimConnectivity::getSchemeDiodesNames() {
+	vector<string> diodes_mask;
+	for (auto& mask : this->getStringValues(M_Cuircuit_ptr->EnumComponents(ComponentAll))) {
+		if (mask[0] == 'D') {
+			diodes_mask.push_back(mask);
+		}
+	}
+	return diodes_mask;
+}
+
+vector<string> MultisimConnectivity::getSchemeTransostorsNames() {
+	vector<string> diodes_mask;
+	for (auto& mask : this->getStringValues(M_Cuircuit_ptr->EnumComponents(ComponentAll))) {
+		if (mask[0] == 'Q') {
+			diodes_mask.push_back(mask);
+		}
+	}
+	return diodes_mask;
+}
+
+vector<double> MultisimConnectivity::getSchemeNominalsFromMask(vector<string> Masks_of_RLC) {
 	vector<double> array_of_nominals;
-	for (auto it = Masks_of_resistors.begin(); it != Masks_of_resistors.end(); it++) {
+	for (auto it = Masks_of_RLC.begin(); it != Masks_of_RLC.end(); it++) {
 		double tmp;
 		M_Cuircuit_ptr->get_RLCValue((_bstr_t)it->c_str(), &tmp);
 		array_of_nominals.push_back(tmp);
@@ -142,6 +162,10 @@ void MultisimConnectivity::FillListComponent(Component_List& c_list) {
 	masks = this->getSchemeInductorNames();
 	nominals_values = this->getSchemeNominalsFromMask(masks);
 	this->FillOneTypeComponents(masks, nominals_values, TypeOfComponent::ComponentInductor, c_list.getRefComponentList());
+	masks = this->getSchemeDiodesNames();
+	this->FillOneTypeComponents(masks, vector<double>(masks.size(), 0.0), TypeOfComponent::ComponentDiode, c_list.getRefComponentList());
+	masks = this->getSchemeTransostorsNames();
+	this->FillOneTypeComponents(masks, vector<double>(masks.size(), 0.0), TypeOfComponent::ComponentTransistor, c_list.getRefComponentList());
 }
 
 QString MultisimConnectivity::getSchemeImage(QString path) {
@@ -222,14 +246,16 @@ void MultisimConnectivity::FillProbesForComponents(Component_List& c_list) {
 				throw(invalid_argument("Have not probe"));
 			}
 			it->probe_value = finded_it->second;
+			it->probe_value_2 = 0.0;
 		}
 		else if (it->type_component == TypeOfComponent::ComponentCapacitor) {
-			auto finded_it_A = probes_values.find("V(" + it->scheme_mark + "VA)");
-			auto finded_it_B = probes_values.find("V(" + it->scheme_mark + "VB)");
-			if (finded_it_A == probes_values.end() || finded_it_B == probes_values.end()) {
+			auto finded_it_VA = probes_values.find("V(" + it->scheme_mark + "VA)");
+			auto finded_it_VB = probes_values.find("V(" + it->scheme_mark + "VB)");
+			if (finded_it_VA == probes_values.end() || finded_it_VB == probes_values.end()) {
 				throw(invalid_argument("Have not probe"));
 			}
-			it->probe_value = abs(abs(finded_it_A->second) - abs(finded_it_B->second));
+			it->probe_value = abs(abs(finded_it_VA->second) - abs(finded_it_VB->second));
+			it->probe_value_2 = 0.0;
 		}
 		else if (it->type_component == TypeOfComponent::ComponentInductor) {
 			auto finded_it = probes_values.find("I(" + it->scheme_mark + "I)");
@@ -237,6 +263,27 @@ void MultisimConnectivity::FillProbesForComponents(Component_List& c_list) {
 				throw(invalid_argument("Have not probe"));
 			}
 			it->probe_value = abs(finded_it->second);
+			it->probe_value_2 = 0.0;
+		}
+		else if (it->type_component == TypeOfComponent::ComponentDiode) {
+			auto finded_it_VA = probes_values.find("V(" + it->scheme_mark + "VA)");
+			auto finded_it_VB = probes_values.find("V(" + it->scheme_mark + "VB)");
+			auto finded_it_I = probes_values.find("I(" + it->scheme_mark + "I)");
+			if (finded_it_VA == probes_values.end() || finded_it_VB == probes_values.end() || finded_it_I == probes_values.end()) {
+				throw(invalid_argument("Have not probe"));
+			}
+			it->probe_value = abs(finded_it_I->second);
+			it->probe_value_2 = abs(abs(finded_it_VA->second) - abs(finded_it_VB->second));
+		}
+		else if (it->type_component == TypeOfComponent::ComponentTransistor) {
+			auto finded_it_VA = probes_values.find("V(" + it->scheme_mark + "VA)");
+			auto finded_it_VB = probes_values.find("V(" + it->scheme_mark + "VB)");
+			auto finded_it_P = probes_values.find("P(" + it->scheme_mark + "P)");
+			if (finded_it_VA == probes_values.end() || finded_it_VB == probes_values.end() || finded_it_P == probes_values.end()) {
+				throw(invalid_argument("Have not probe"));
+			}
+			it->probe_value = abs(finded_it_P->second);
+			it->probe_value_2 = abs(abs(finded_it_VA->second) - abs(finded_it_VB->second));
 		}
 	}
 }

@@ -7,6 +7,10 @@
 #include <QtWidgets/QDialogButtonBox>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QSplitter>
+#include <QVBoxLayout>
+#include <QtWidgets/QRadioButton>
+#include <QTextEdit>
+#include <QLineEdit>
 #include <iostream>
 
 
@@ -17,10 +21,15 @@ public:
 	~DialogOptions();
 	double getPriemka();
 	QString getTempreture();
+	double getHz();
 	void ShowFromMainWindow();
+	QDialogButtonBox* getButtonBox();
 private slots:
 	void accept();
 	void reject();
+	void InputFrequency();
+	void setDCsignal();
+
 private:
 	QDialog* dialog;
 	QDialogButtonBox *buttonBox;
@@ -30,6 +39,15 @@ private:
 	QSplitter *splitter_2;
 	QLabel *label_2;
 	QComboBox *comboBox_2;
+	QVBoxLayout* vertical_layout_1;
+	QRadioButton *radioButton;
+	QRadioButton *radioButton_2;
+	QWidget* widget1;
+	QWidget* widget2;
+	QLabel *label_3;
+	QVBoxLayout* vertical_layout_2;
+	QLineEdit *textEdit;
 	double Priemka;
 	QString Tempreture;
+	double Hz;
 };

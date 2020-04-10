@@ -32,7 +32,9 @@ private:
 	vector<string> getSchemeCapacitorsNames();
 	vector<string> getSchemeInductorNames();
 	vector<string> getStringValues(_variant_t result_of_operation);
-	vector<double> getSchemeNominalsFromMask(vector<string> Masks_of_elements);
+	vector<double> getSchemeNominalsFromMask(vector<string> Masks_of_RLC);
+	vector<string> getSchemeDiodesNames();
+	vector<string> getSchemeTransostorsNames();
 	void FillOneTypeComponents(vector<string>& masks, vector<double>& nominals_values, TypeOfComponent t, vector<_component>& c_list);
 public:
 	map<string, double>& getProbesValues();

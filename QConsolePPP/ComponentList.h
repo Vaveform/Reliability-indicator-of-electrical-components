@@ -5,12 +5,18 @@
 #include <QString>
 #include <string>
 #include <QStringList>
+#include <QtSql/qtsqlglobal.h>
+#include <QtSql/qsqlerror.h>
+#include <QtSql/qsqlquery.h>
+#include <QtSql/qsqlquerymodel.h>
 #include <algorithm>
 
 enum class TypeOfComponent {
 	ComponentResistor = 2,
 	ComponentCapacitor = 3,
-	ComponentInductor = 4
+	ComponentInductor = 4,
+	ComponentDiode = 5,
+    ComponentTransistor = 6
 };
 
 struct _component {
@@ -19,7 +25,9 @@ struct _component {
 	TypeOfComponent type_component;
 	QString model_name;
 	double probe_value;
+	double probe_value_2;
 	double realibility_idx;
+	QSqlDatabase db;
 };
 
 
