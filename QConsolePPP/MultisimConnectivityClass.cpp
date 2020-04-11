@@ -169,7 +169,7 @@ void MultisimConnectivity::FillListComponent(Component_List& c_list) {
 }
 
 QString MultisimConnectivity::getSchemeImage(QString path) {
-	_bstr_t bstr_path = (_bstr_t)(path.toStdString() + "\Scheme_image.jpg").c_str();
+	_bstr_t bstr_path = (_bstr_t)(path.toStdString() + "/Scheme_image.jpg").c_str();
 	QString result = M_Cuircuit_ptr->GetCircuitImage(CircuitImageJPG, bstr_path);
 	return result;
 }
